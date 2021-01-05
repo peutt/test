@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "773347952449",
+    "project_id": "morpion-a2805",
+    "storage_bucket": "morpion-a2805.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773347952449:android:8339527d1e1adb1cfd43c0",
+        "android_client_info": {
+          "package_name": "com.example.morpion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773347952449-vtahe7g6pg13knh5vuemj475dlt13nek.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI_K_HosEQMk34W6JNvdD6guYSbYQwL30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773347952449-vtahe7g6pg13knh5vuemj475dlt13nek.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
