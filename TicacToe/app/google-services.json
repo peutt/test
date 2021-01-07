@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1079644318846",
+    "firebase_url": "https://morpion-9741b-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "morpion-9741b",
+    "storage_bucket": "morpion-9741b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079644318846:android:99c8139ab739f7edba7c2f",
+        "android_client_info": {
+          "package_name": "com.mobile.tictactoe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079644318846-kltv1jh9r5enh8k5sf2pppl9qjhpnn36.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXPlUaNP2PkkptWNUB2VKAQb-6gngUrfo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079644318846-kltv1jh9r5enh8k5sf2pppl9qjhpnn36.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
