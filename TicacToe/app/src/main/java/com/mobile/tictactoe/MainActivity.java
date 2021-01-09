@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int joueur = 1;
     private TextView tvJoueur;
     private ArrayList<Button> all_buttons = new ArrayList<>();
+    private ArrayList<String> firebase_buttons = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRefNbJoueur = database.getReference("NbJoueur");
+        myRefNbJoueur.setValue(NbJoueur);
+        DatabaseReference myRefjoueurEnCours = database.getReference("joueurEnCours");
+
         myRefNbJoueur.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -65,6 +69,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.w("APPX", "Failed to read value.", error.toException());
             }
         });
+        myRefjoueurEnCours.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                int value = dataSnapshot.getValue(int.class);
+                joueurEnCours=value;
+                Log.d("APPX", "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("APPX", "Failed to read value.", error.toException());
+            }
+        });
+
 
         tvJoueur = (TextView) findViewById(R.id.joueur);
         Button bt1 = (Button) findViewById(R.id.bt1);
@@ -85,6 +106,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         all_buttons.add(bt7);
         all_buttons.add(bt8);
         all_buttons.add(bt9);
+        firebase_buttons.add("1,1");
+        firebase_buttons.add("1,2");
+        firebase_buttons.add("1,3");
+        firebase_buttons.add("2,1");
+        firebase_buttons.add("2,2");
+        firebase_buttons.add("2,3");
+        firebase_buttons.add("3,1");
+        firebase_buttons.add("3,2");
+        firebase_buttons.add("3,3");
+        for (String bt : firebase_buttons){
+            DatabaseReference myReFirebase = database.getReference(bt);
+            myReFirebase.setValue(2);
+        }
         for (Button bt : all_buttons) {
             bt.setBackground(null);
             bt.setOnClickListener(this);
@@ -99,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     @Override
     public void onClick(View view) {
+
         //On ne fait rien si la case cliqué n'est pas vide
         if (view.getBackground() != null )
             return;
@@ -109,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("1,1");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
 
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("1,1");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt2:
@@ -123,12 +158,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("1,2");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("1,2");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt3:
@@ -136,12 +171,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("1,3");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("1,3");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt4:
@@ -149,12 +184,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("2,1");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("2,1");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt5:
@@ -162,12 +197,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("2,2");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("2,2");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt6:
@@ -175,12 +210,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("2,3");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("2,3");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt7:
@@ -188,12 +223,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("3,1");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("3,1");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt8:
@@ -201,12 +236,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("3,2");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("3,2");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             case R.id.bt9:
@@ -214,12 +249,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("3,3");
-                    myRef.setValue("x");
+                    myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("3,3");
-                    myRef.setValue("o");
+                    myRef.setValue(1);
                 }
                 break;
             default:
@@ -242,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("joueurEnCours");
-        myRef.setValue(String.valueOf(joueurEnCours));
+        myRef.setValue(joueurEnCours);
 
         int res = checkWinner();
         displayAlertDialog(res);
