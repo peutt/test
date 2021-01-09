@@ -31,50 +31,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 1 : X
     // 2 : O
     private int plateau[][] = new int[3][3];
-    private int a=0;
-    private int i=0;
-    private int b=0;
-
+    private int NbJoueur;
     // 1 : X
     // 2 : O
-
     private int joueurEnCours = 1;
     private int joueur = 1;
     private TextView tvJoueur;
-    private ArrayList<String> firebase_buttons = new ArrayList<>();
-
-
-
     private ArrayList<Button> all_buttons = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("nbPlayer");
-        myRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference myRefNbJoueur = database.getReference("NbJoueur");
+        myRefNbJoueur.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                if(value=="0" & a==0){
-                    myRef.setValue("1");
-                    joueur = 1;
-                    a=1;
-                }
-                if(value=="1" & a==0){
-                    myRef.setValue("2");
-                    joueur = 2;
-                    a=1;
-                }
-                if(value=="2" & a==0){
+                int value = dataSnapshot.getValue(int.class);
+                NbJoueur = value+1;
+                myRefNbJoueur.setValue(NbJoueur);
+                if (NbJoueur >2) {
                     displayAlertDialog(4);
-                    a=1;
                 }
-
                 Log.d("APPX", "Value is: " + value);
             }
 
@@ -84,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.w("APPX", "Failed to read value.", error.toException());
             }
         });
-        tvJoueur = (TextView) findViewById(R.id.joueur);
 
+        tvJoueur = (TextView) findViewById(R.id.joueur);
         Button bt1 = (Button) findViewById(R.id.bt1);
         Button bt2 = (Button) findViewById(R.id.bt2);
         Button bt3 = (Button) findViewById(R.id.bt3);
@@ -95,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button bt7 = (Button) findViewById(R.id.bt7);
         Button bt8 = (Button) findViewById(R.id.bt8);
         Button bt9 = (Button) findViewById(R.id.bt9);
-
         all_buttons.add(bt1);
         all_buttons.add(bt2);
         all_buttons.add(bt3);
@@ -105,67 +85,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         all_buttons.add(bt7);
         all_buttons.add(bt8);
         all_buttons.add(bt9);
-
-        firebase_buttons.add("1,1");
-        firebase_buttons.add("1,2");
-        firebase_buttons.add("1,3");
-        firebase_buttons.add("2,1");
-        firebase_buttons.add("2,2");
-        firebase_buttons.add("2,3");
-        firebase_buttons.add("3,1");
-        firebase_buttons.add("3,2");
-        firebase_buttons.add("3,3");
-
         for (Button bt : all_buttons) {
             bt.setBackground(null);
             bt.setOnClickListener(this);
         }
     }
     @Override
-    public void onDestroy() {
-
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("nbPlayer");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                if(value=="0" & a==1){
-                    displayAlertDialog(5);
-                    a=2;
-                }
-                if(value=="1" & a==1){
-                    myRef.setValue("0");
-                    joueur = 2;
-                    a=2;
-                }
-                if(value=="2" & a==1){
-                    myRef.setValue("1");
-                    a=2;
-                }
-
-                Log.d("APPX", "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("APPX", "Failed to read value.", error.toException());
-            }
-        });
-
-
+        DatabaseReference myRefNbJoueur = database.getReference("NbJoueur");
+        myRefNbJoueur.setValue(NbJoueur-1);
     }
     @Override
     public void onClick(View view) {
-
         //On ne fait rien si la case cliqué n'est pas vide
-        if (view.getBackground() != null | joueurEnCours != joueur )
+        if (view.getBackground() != null )
             return;
-
         //Gestion du plateau
         switch (view.getId()) {
             case R.id.bt1:     // if(view.getId() == R.id.bt1)
@@ -289,20 +225,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 return;
         }
-
         //Affiche le pion
         Drawable drawableJoueur;
         if (joueurEnCours == 1)
             drawableJoueur = ContextCompat.getDrawable(this, R.drawable.x);
-
         else
             drawableJoueur = ContextCompat.getDrawable(this, R.drawable.o);
         view.setBackground(drawableJoueur);
-        Drawable drawableFirebaseX;
-        drawableFirebaseX = ContextCompat.getDrawable(this, R.drawable.x);
-        Drawable drawableFirebaseO;
-        drawableFirebaseO = ContextCompat.getDrawable(this, R.drawable.o);
-
         //Changement de joueur
         if (joueurEnCours == 1) {
             joueurEnCours = 2;
@@ -317,55 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         int res = checkWinner();
         displayAlertDialog(res);
-        while(joueurEnCours != joueur){
-            b=3;
-            DatabaseReference myRefJoueurEnCours = database.getReference("JoueurEnCours");
 
-            myRefJoueurEnCours.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
-                    String value = dataSnapshot.getValue(String.class);
-                    if(b==3) {
-                        joueurEnCours = Integer.parseInt(value);
-                    }
-                    Log.d("APPX", "Value is: " + value);
-                }
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Failed to read value
-                    Log.w("APPX", "Failed to read value.", error.toException());
-                }
-            });
-            b=0;
-            i=0;
-            for (String bt : firebase_buttons) {
-                DatabaseReference myRefirebase = database.getReference(bt);
-
-                myRefirebase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        String value = dataSnapshot.getValue(String.class);
-                        if(value=="x"){
-                            all_buttons.get(i).setBackground(drawableFirebaseX);
-                        }
-                        if(value=="o"){
-                            all_buttons.get(i).setBackground(drawableFirebaseO);
-                        }
-                        Log.d("APPX", "Value is: " + value);
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.w("APPX", "Failed to read value.", error.toException());
-                    }
-                });
-                i++;
-            }
-        }
     }
 
     // 0 : partie non fini
