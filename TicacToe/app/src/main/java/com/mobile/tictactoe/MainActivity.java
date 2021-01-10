@@ -18,10 +18,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.Path;
 import com.mobile.tictactoe.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Integer.parseInt;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,14 +34,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 1 : X
     // 2 : O
     private int plateau[][] = new int[3][3];
-    private int NbJoueur;
+    private int a;
     // 1 : X
     // 2 : O
     private int joueurEnCours = 1;
-    private int joueur = 1;
+    private int joueur;
+    private int NbJoueur;
     private TextView tvJoueur;
     private ArrayList<Button> all_buttons = new ArrayList<>();
     private ArrayList<String> firebase_buttons = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRefNbJoueur = database.getReference("NbJoueur");
-        myRefNbJoueur.setValue(NbJoueur);
         DatabaseReference myRefjoueurEnCours = database.getReference("joueurEnCours");
+
 
         myRefNbJoueur.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -55,10 +60,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 int value = dataSnapshot.getValue(int.class);
-                NbJoueur = value+1;
-                myRefNbJoueur.setValue(NbJoueur);
-                if (NbJoueur >2) {
-                    displayAlertDialog(4);
+                    joueur = value + 1;
+                    NbJoueur =value +1;
+                    myRefNbJoueur.setValue(joueur);
+                    if (joueur > 2) {
+                        displayAlertDialog(4);
+
                 }
                 Log.d("APPX", "Value is: " + value);
             }
@@ -106,15 +113,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         all_buttons.add(bt7);
         all_buttons.add(bt8);
         all_buttons.add(bt9);
-        firebase_buttons.add("1,1");
-        firebase_buttons.add("1,2");
-        firebase_buttons.add("1,3");
-        firebase_buttons.add("2,1");
-        firebase_buttons.add("2,2");
-        firebase_buttons.add("2,3");
-        firebase_buttons.add("3,1");
-        firebase_buttons.add("3,2");
-        firebase_buttons.add("3,3");
+        firebase_buttons.add("1");
+        firebase_buttons.add("2");
+        firebase_buttons.add("3");
+        firebase_buttons.add("4");
+        firebase_buttons.add("5");
+        firebase_buttons.add("6");
+        firebase_buttons.add("7");
+        firebase_buttons.add("8");
+        firebase_buttons.add("9");
         for (String bt : firebase_buttons){
             DatabaseReference myReFirebase = database.getReference(bt);
             myReFirebase.setValue(2);
@@ -123,6 +130,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             bt.setBackground(null);
             bt.setOnClickListener(this);
         }
+        Drawable drawableFirebaseX=ContextCompat.getDrawable(this, R.drawable.x);
+        Drawable drawableFirebaseO=ContextCompat.getDrawable(this, R.drawable.o);
+        for (String bt : firebase_buttons) {
+            DatabaseReference myRefirebase = database.getReference(bt);
+            myRefirebase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    int value = dataSnapshot.getValue(int.class);
+                    String path= dataSnapshot.getKey();
+                    if(value==0){
+                        all_buttons.get(parseInt(path)-1).setBackground(drawableFirebaseX);
+                    }
+                    if(value==1){
+                        all_buttons.get(parseInt(path)-1).setBackground(drawableFirebaseO);
+                    }
+                        /*if (value == 0 & all_buttons.get(parseInt(dataSnapshot.getKey())).getBackground() == null ) {
+                            all_buttons.get(parseInt(dataSnapshot.getKey())).setBackground(drawableFirebaseX);
+                        }
+                        if (value == 1 & all_buttons.get(parseInt(dataSnapshot.getKey())).getBackground() == null) {
+                            all_buttons.get(parseInt(dataSnapshot.getKey())).setBackground(drawableFirebaseO);
+                        }*/
+
+                    Log.d("APPX", "Value is: " + value);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w("APPX", "Failed to read value.", error.toException());
+                }
+            });
+        }
+
     }
     @Override
     public void onStop() {
@@ -135,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
 
         //On ne fait rien si la case cliqué n'est pas vide
-        if (view.getBackground() != null )
+        if (view.getBackground() != null |joueurEnCours!=joueur)
             return;
         //Gestion du plateau
         switch (view.getId()) {
@@ -143,13 +185,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[0][0] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("1,1");
+                    DatabaseReference myRef = database.getReference("1");
                     myRef.setValue(0);
 
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("1,1");
+                    DatabaseReference myRef = database.getReference("1");
                     myRef.setValue(1);
                 }
                 break;
@@ -157,12 +199,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[1][0] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("1,2");
+                    DatabaseReference myRef = database.getReference("2");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("1,2");
+                    DatabaseReference myRef = database.getReference("2");
                     myRef.setValue(1);
                 }
                 break;
@@ -170,12 +212,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[2][0] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("1,3");
+                    DatabaseReference myRef = database.getReference("3");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("1,3");
+                    DatabaseReference myRef = database.getReference("3");
                     myRef.setValue(1);
                 }
                 break;
@@ -183,12 +225,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[0][1] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("2,1");
+                    DatabaseReference myRef = database.getReference("4");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("2,1");
+                    DatabaseReference myRef = database.getReference("4");
                     myRef.setValue(1);
                 }
                 break;
@@ -196,12 +238,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[1][1] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("2,2");
+                    DatabaseReference myRef = database.getReference("5");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("2,2");
+                    DatabaseReference myRef = database.getReference("5");
                     myRef.setValue(1);
                 }
                 break;
@@ -209,12 +251,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[2][1] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("2,3");
+                    DatabaseReference myRef = database.getReference("6");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("2,3");
+                    DatabaseReference myRef = database.getReference("6");
                     myRef.setValue(1);
                 }
                 break;
@@ -222,12 +264,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[0][2] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("3,1");
+                    DatabaseReference myRef = database.getReference("7");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("3,1");
+                    DatabaseReference myRef = database.getReference("7");
                     myRef.setValue(1);
                 }
                 break;
@@ -235,12 +277,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[1][2] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("3,2");
+                    DatabaseReference myRef = database.getReference("8");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("3,2");
+                    DatabaseReference myRef = database.getReference("8");
                     myRef.setValue(1);
                 }
                 break;
@@ -248,12 +290,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 plateau[2][2] = joueurEnCours;
                 if (joueurEnCours == 1) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("3,3");
+                    DatabaseReference myRef = database.getReference("9");
                     myRef.setValue(0);
                 }
                 else {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("3,3");
+                    DatabaseReference myRef = database.getReference("9");
                     myRef.setValue(1);
                 }
                 break;
@@ -267,14 +309,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else
             drawableJoueur = ContextCompat.getDrawable(this, R.drawable.o);
         view.setBackground(drawableJoueur);
-        //Changement de joueur
         if (joueurEnCours == 1) {
             joueurEnCours = 2;
-            tvJoueur.setText("O");
+            tvJoueur.setText("X");
         } else {
             joueurEnCours = 1;
-            tvJoueur.setText("X");
+            tvJoueur.setText("O");
         }
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("joueurEnCours");
         myRef.setValue(joueurEnCours);
