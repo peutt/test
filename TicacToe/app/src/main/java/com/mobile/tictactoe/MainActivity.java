@@ -466,8 +466,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for (int line = 0; line <= 2; line++) {
                 plateau[col][line] = 0;
             }
+        }FirebaseDatabase database = FirebaseDatabase.getInstance();
+        for (String bt : firebase_buttons){
+            DatabaseReference myReFirebase = database.getReference(bt);
+            myReFirebase.setValue(2);
         }
-
         for (Button bt : all_buttons) {
             bt.setBackground(null);
         }
