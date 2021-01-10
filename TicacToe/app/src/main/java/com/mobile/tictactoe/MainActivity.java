@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 1 : X
     // 2 : O
     private int plateau[][] = new int[3][3];
-    private int a;
     // 1 : X
     // 2 : O
     private int joueurEnCours = 1;
@@ -83,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // whenever data at this location is updated.
                 int value = dataSnapshot.getValue(int.class);
                 joueurEnCours=value;
+                if (value == 1) {
+                    tvJoueur.setText("X");
+                } else {
+                    tvJoueur.setText("O");
+                }
                 Log.d("APPX", "Value is: " + value);
             }
 
@@ -143,10 +147,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String path= dataSnapshot.getKey();
                     if(value==0){
                         all_buttons.get(parseInt(path)-1).setBackground(drawableFirebaseX);
+                        switch(all_buttons.get(parseInt(path)-1).getId()){
+                            case R.id.bt1:     // if(view.getId() == R.id.bt1)
+                                plateau[0][0] = 1;
+                                break;
+                            case R.id.bt2:
+                                plateau[1][0] = 1;
+                                break;
+                            case R.id.bt3:
+                                plateau[2][0] = 1;
+                                break;
+                            case R.id.bt4:
+                                plateau[0][1] = 1;
+                                break;
+                            case R.id.bt5:
+                                plateau[1][1] = 1;
+                                break;
+                            case R.id.bt6:
+                                plateau[2][1] = 1;
+                                break;
+                            case R.id.bt7:
+                                plateau[0][2] = 1;
+                                break;
+                            case R.id.bt8:
+                                plateau[1][2] = 1;
+                                break;
+                            case R.id.bt9:
+                                plateau[2][2] = 1;
+                                break;
+                        }
                     }
                     if(value==1){
                         all_buttons.get(parseInt(path)-1).setBackground(drawableFirebaseO);
+                        switch(all_buttons.get(parseInt(path)-1).getId()){
+                            case R.id.bt1:     // if(view.getId() == R.id.bt1)
+                                plateau[0][0] = 2;
+                                break;
+                            case R.id.bt2:
+                                plateau[1][0] = 2;
+                                break;
+                            case R.id.bt3:
+                                plateau[2][0] = 2;
+                                break;
+                            case R.id.bt4:
+                                plateau[0][1] = 2;
+                                break;
+                            case R.id.bt5:
+                                plateau[1][1] = 2;
+                                break;
+                            case R.id.bt6:
+                                plateau[2][1] = 2;
+                                break;
+                            case R.id.bt7:
+                                plateau[0][2] = 2;
+                                break;
+                            case R.id.bt8:
+                                plateau[1][2] = 2;
+                                break;
+                            case R.id.bt9:
+                                plateau[2][2] = 2;
+                                break;
+                        }
                     }
+
+                    int res = checkWinner();
+                    displayAlertDialog(res);
                         /*if (value == 0 & all_buttons.get(parseInt(dataSnapshot.getKey())).getBackground() == null ) {
                             all_buttons.get(parseInt(dataSnapshot.getKey())).setBackground(drawableFirebaseX);
                         }
@@ -302,13 +367,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 return;
         }
-        //Affiche le pion
-        Drawable drawableJoueur;
-        if (joueurEnCours == 1)
-            drawableJoueur = ContextCompat.getDrawable(this, R.drawable.x);
-        else
-            drawableJoueur = ContextCompat.getDrawable(this, R.drawable.o);
-        view.setBackground(drawableJoueur);
         if (joueurEnCours == 1) {
             joueurEnCours = 2;
             tvJoueur.setText("X");
@@ -317,12 +375,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tvJoueur.setText("O");
         }
 
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("joueurEnCours");
         myRef.setValue(joueurEnCours);
-
-        int res = checkWinner();
-        displayAlertDialog(res);
 
     }
 
